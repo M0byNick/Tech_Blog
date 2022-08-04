@@ -25,19 +25,15 @@ router.get('/', withAuth, (req, res) => {
                     attributes: ['username']
                 }
             ]
-        })
-        .then(dbPostData => {
-//A getter is a get() function defined for one column
+        }).then(dbPostData => {
             const posts = dbPostData.map(post => post.get({ plain: true }));
             res.render('dashboard', { posts, loggedIn: true });
-        })
-        .catch(err => {
+        }).catch(err => {
             console.log(err);
             res.status(500).json(err);
         });
 });
 
-//When a user clicks to edit a specific id, make sure hey are logged in
 router.get('/edit/:id', withAuth, (req, res) => {
     //If user is logged in, find that post by id
     Post.findOne({
@@ -62,24 +58,19 @@ router.get('/edit/:id', withAuth, (req, res) => {
                     }
                 }
             ]
-        })
-        //If there is no post with that data found by id, post error
-        .then(dbPostData => {
+        }).then(dbPostData => {
             if (!dbPostData) {
                 res.status(404).json({ message: 'No post exists with this id.' });
                 return;
             }
-
-            //Otherwise return object rendered to edit-post page
             const post = dbPostData.get({ plain: true });
             res.render('edit-post', { post, loggedIn: true });
-        })
-        .catch(err => {
+        }).catch(err => {
             console.log(err);
             res.status(500).json(err);
         });
 });
-//If a user wants to edit their user profile
+
 router.get('/edituser', withAuth, (req, res) => {
     User.findOne({
         attributes: {
